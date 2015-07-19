@@ -1,10 +1,23 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
 
 
 ## Loading and preprocessing the data
 
 ```r
 library(data.table)
+```
+
+```
+## data.table 1.9.4  For help type: ?data.table
+## *** NB: by=.EACHI is now explicit. See README to restore previous behaviour.
+```
+
+```r
 actData <- read.csv("/Users/jenny/Documents/Work no Dropbox/Git/RepData_PeerAssessment1/activity.csv")
 
 #transform the date variable into date variable
@@ -23,7 +36,7 @@ hist( sumDailySteps$V1,
       xlab = "Daily total")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
 
 ```r
 #Mean
@@ -59,7 +72,7 @@ aveDailySteps <- dt[ , mean(steps, na.rm = TRUE), by = interval]
  plot(aveDailySteps$interval, aveDailySteps$V1, type = "l", xlab = "Interval", ylab = "Average daily steps")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
 
 ```r
 aveDailySteps[which.max(aveDailySteps$V1)]
@@ -102,7 +115,7 @@ hist( sumDailyStepsImp$V1,
       xlab = "Daily total")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
 
 ```r
 #Mean
@@ -174,6 +187,6 @@ xyplot(V1 ~ interval | dayIndex, data = aveDailySteps,
        type = "l", xlab = "Interval", ylab = "Number of steps", layout = c(1,2))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
 
 On weekends, the activity is slightly more equally distributed and does not peak as much around 800.
