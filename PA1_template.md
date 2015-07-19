@@ -1,13 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-``` {r, echo = TRUE}
+
+```r
 library(data.table)
 actData <- read.csv("/Users/jenny/Documents/Work no Dropbox/Git/RepData_PeerAssessment1/activity.csv")
 
@@ -18,45 +14,78 @@ dt <- data.table(actData)
 
 
 ## What is mean total number of steps taken per day?
-``` {r, echo = TRUE}
+
+```r
 sumDailySteps <- dt[ , sum(steps, na.rm = TRUE), by = date]
 
 hist( sumDailySteps$V1, 
       main = "Total number of steps per day",
       xlab = "Daily total")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+
+```r
 #Mean
 summary(sumDailySteps)[4,2]
+```
 
+```
+## [1] "Mean   : 9354  "
+```
+
+```r
 #Median
 summary(sumDailySteps)[3,2]
+```
 
+```
+## [1] "Median :10395  "
+```
+
+```r
 knitr::knit_hooks$set(inline = function(x) {
   knitr:::format_sci(x, 'md')
 })
 ```
 
-The mean and median total number of steps taken per day are `r as.numeric(gsub("Mean   :","" ,summary(sumDailySteps)[4,2]))`
-and `r as.numeric(gsub("Median :","" ,summary(sumDailySteps)[3,2]))`, respectively.
+The mean and median total number of steps taken per day are 9354
+and 1.0395&times; 10^4^, respectively.
 
 ## What is the average daily activity pattern?
-```{r, echo = TRUE}
+
+```r
 aveDailySteps <- dt[ , mean(steps, na.rm = TRUE), by = interval]
  plot(aveDailySteps$interval, aveDailySteps$V1, type = "l", xlab = "Interval", ylab = "Average daily steps")
- 
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+```r
 aveDailySteps[which.max(aveDailySteps$V1)]
 ```
 
-The 5-minute interval `r aveDailySteps[which.max(aveDailySteps$V1)]$interval`, on average across all the days in the dataset, contains the maximum number of steps.
+```
+##    interval       V1
+## 1:      835 206.1698
+```
+
+The 5-minute interval 835, on average across all the days in the dataset, contains the maximum number of steps.
 
 ## Imputing missing values
 
-```{r}
+
+```r
 dt[,sum(is.na(steps)),]
 ```
-The total number of missing values is `r dt[,sum(is.na(steps)),]`.
 
-```{r, echo = TRUE}
+```
+## [1] 2304
+```
+The total number of missing values is 2304.
+
+
+```r
 actDataImp <- actData
 for (s in 1:dim(actData)[1]) {
         if ( is.na(actData$steps[s]) ) {
@@ -71,26 +100,59 @@ sumDailyStepsImp <- dtImp[ , sum(steps, na.rm = TRUE), by = date]
 hist( sumDailyStepsImp$V1, 
       main = "Total number of steps per day, imputed data",
       xlab = "Daily total")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
+```r
 #Mean
 summary(sumDailyStepsImp)[4,2]
+```
 
+```
+## [1] "Mean   :10766  "
+```
+
+```r
 #Median
 summary(sumDailyStepsImp)[3,2]
+```
 
+```
+## [1] "Median :10766  "
+```
+
+```r
 #What is the impact of imputing missing data on the estimates of the total daily number of steps?
 sumDailySteps$V1 == sumDailyStepsImp$V1
+```
+
+```
+##  [1] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE
+## [12]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+## [23]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE
+## [34]  TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE
+## [45] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+## [56]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE
+```
+
+```r
 sum(sumDailySteps$V1) < sum(sumDailyStepsImp$V1)
 ```
 
-The mean and median total number of steps taken per day are `r as.numeric(gsub("Mean   :","" ,summary(sumDailyStepsImp)[4,2]))`
-and `r as.numeric(gsub("Median :","" ,summary(sumDailyStepsImp)[3,2]))`, respectively.
+```
+## [1] TRUE
+```
+
+The mean and median total number of steps taken per day are 1.0766&times; 10^4^
+and 1.0766&times; 10^4^, respectively.
 The data look more normally distributed now and the mean and the median are equal.
 The values do differ from the first part of the assignment. The total daily number of steps
 are larger for those days thad had missings.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r, echo = TRUE}
+
+```r
 library(lattice)
 dayIndex <- array(NA,length(actDataImp$date))
 wkd <- weekdays(actDataImp$date)
@@ -111,5 +173,7 @@ aveDailySteps <- dtImpInd[ , mean(steps, na.rm = TRUE), by = c("dayIndex","inter
 xyplot(V1 ~ interval | dayIndex, data = aveDailySteps,
        type = "l", xlab = "Interval", ylab = "Number of steps", layout = c(1,2))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
 On weekends, the activity is slightly more equally distributed and does not peak as much around 800.
